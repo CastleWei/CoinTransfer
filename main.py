@@ -1,5 +1,4 @@
 import gevent
-import grequests
 import json
 import time
 
@@ -33,7 +32,7 @@ def output_writer(q: Queue):
     path = 'output/result.json'
     # 重新启动程序后先清空
     with open(path, 'wb') as f:
-        f.write('{}')
+        f.write(b'{}')
 
     while True:
         if q.not_empty:
@@ -46,8 +45,7 @@ def output_writer(q: Queue):
         # TODO: 如何正确退出
 
 from multiprocessing import Process
-# !!!???
-Process(target=output_writer, arg=(output_queue,)).start()
+Process(target=output_writer, args=(output_queue,)).start()
 
 
 total_money = 1000
@@ -65,8 +63,8 @@ def do_scheme(sch):
 
     if src_checker.value and dst_checker.value:
         global total_money
-        buy_amount = sch.src.can_buy(total_money)
-        sell_money = sch.dst.can_sell(buy_amount)
+        buy_amount = sch.src.can_buy(sch.coin, total_money)
+        sell_money = sch.dst.can_sell(sch.coin, buy_amount)
         profit = sell_money - total_money
 
         result = dict(
