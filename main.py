@@ -7,11 +7,11 @@ from utils import Direction
 
 platfroms = []
 
-from coin_platforms import GateIO
+from coin_platforms.GateIO import GateIO
 platfroms.append(GateIO)
-from coin_platforms import DragonEx
+from coin_platforms.DragonEx import DragonEx
 platfroms.append(DragonEx)
-from coin_platforms import Huobi
+from coin_platforms.Huobi import Huobi
 platfroms.append(Huobi)
 
 schemes = [
@@ -25,8 +25,8 @@ schemes = [
 ]
 
 
-# from multiprocessing import Process
-from queue import Queue
+from multiprocessing import Process, Queue
+# ！！注意，Queue一定要用multiprocessing里的，用queue.Queue会出现'参数错误'，很难查出原因
 output_queue = Queue()
 
 def output_writer(q: Queue):
@@ -36,7 +36,7 @@ def output_writer(q: Queue):
         f.write(b'{}')
 
     while True:
-        if q.not_empty:
+        if not q.empty():
             data = json.load(open(path, 'rb'))
             while not q.empty():
                 it = q.get()
@@ -89,10 +89,9 @@ def do_scheme(sch):
 
     gevent.sleep(1)
 
-from threading import Thread
 if __name__ == '__main__':
-    # Process(target=output_writer, args=(output_queue,)).start()
-    Thread(target=output_writer, args=(output_queue,)).start()
+    Process(target=output_writer, args=(output_queue,)).start()
+    # Thread(target=output_writer, args=(output_queue,)).start()
     while True:
         pool_size = len(schemes) / 3 + 1
         pool = gevent.pool.Pool(pool_size)
