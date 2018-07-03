@@ -91,6 +91,7 @@ if __name__ == '__main__':
     while True:
         pool_size = len(schemes) / 3 + 1
         pool = gevent.pool.Pool(pool_size)
+        # TODO: pool.imap_unordered
         for sch in schemes:
             pool.spawn(do_scheme, sch)
         pool.join()
