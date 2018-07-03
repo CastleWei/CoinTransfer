@@ -1,0 +1,58 @@
+{
+  "GateIO$$btc$$DragonEx": {
+    "name": "GateIO$$btc$$DragonEx",
+    "repr": "GateIO --> btc --> DragonEx",
+    "buy_amount": 0.14913953348427522,
+    "sell_money": 1017.7418358270249,
+    "profit": 17.741835827024943,
+    "time": 1530610113.2490911
+  },
+  "DragonEx$$btc$$GateIO": {
+    "name": "DragonEx$$btc$$GateIO",
+    "repr": "DragonEx --> btc --> GateIO",
+    "buy_amount": 0.14384619670606977,
+    "sell_money": 953.6930918514072,
+    "profit": -46.30690814859281,
+    "time": 1530610113.2320793
+  },
+  "GateIO$$eth$$DragonEx": {
+    "name": "GateIO$$eth$$DragonEx",
+    "repr": "GateIO --> eth --> DragonEx",
+    "buy_amount": 2.0807248146988204,
+    "sell_money": 1027.4619134982775,
+    "profit": 27.461913498277454,
+    "time": 1530610116.2814577
+  },
+  "DragonEx$$eth$$GateIO": {
+    "name": "DragonEx$$eth$$GateIO",
+    "repr": "DragonEx --> eth --> GateIO",
+    "buy_amount": 2.0082002022244696,
+    "sell_money": 959.9220516632965,
+    "profit": -40.07794833670346,
+    "time": 1530610115.339068
+  },
+  "GateIO$$btc$$Huobi": {
+    "name": "GateIO$$btc$$Huobi",
+    "repr": "GateIO --> btc --> Huobi",
+    "buy_amount": 0.14913953348427522,
+    "sell_money": 989.3187067632746,
+    "profit": -10.681293236725423,
+    "time": 1530610115.5371432
+  },
+  "GateIO$$eth$$Huobi": {
+    "name": "GateIO$$eth$$Huobi",
+    "repr": "GateIO --> eth --> Huobi",
+    "buy_amount": 2.0807248146988204,
+    "sell_money": 994.1703164630965,
+    "profit": -5.829683536903531,
+    "time": 1530610117.5261188
+  },
+  "Huobi$$eth$$DragonEx": {
+    "name": "Huobi$$eth$$DragonEx",
+    "repr": "Huobi --> eth --> DragonEx",
+    "buy_amount": 2.078565210112172,
+    "sell_money": 1026.3955007533905,
+    "profit": 26.39550075339048,
+    "time": 1530610117.8535202
+  }
+}

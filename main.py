@@ -25,6 +25,7 @@ schemes = [
 ]
 
 
+# from multiprocessing import Process
 from queue import Queue
 output_queue = Queue()
 
@@ -37,15 +38,14 @@ def output_writer(q: Queue):
     while True:
         if q.not_empty:
             data = json.load(open(path, 'rb'))
-            while q.not_empty:
+            while not q.empty():
                 it = q.get()
                 data[it['name']] = it
-            json.dump(data, open(path, 'wb'))
-        time.sleep(5)
+            # print('data:', data)
+            json.dump(data, open(path, 'wt'), indent=2)
+            # open(path, 'wb').write(json.dumps(data))
+        time.sleep(2)
         # TODO: 如何正确退出
-
-from multiprocessing import Process
-Process(target=output_writer, args=(output_queue,)).start()
 
 
 total_money = 1000
@@ -70,12 +70,15 @@ def do_scheme(sch):
         result = dict(
             name=sch.name,
             repr=sch.repr,
+            buy_amount=buy_amount,
+            sell_money=sell_money,
             profit=profit,
             time=time.time() # TODO
         )
 
         global output_queue
         output_queue.put(result)
+        # print(result)
 
         if profit > 2:
             # do the transfer
@@ -86,8 +89,10 @@ def do_scheme(sch):
 
     gevent.sleep(1)
 
-
+from threading import Thread
 if __name__ == '__main__':
+    # Process(target=output_writer, args=(output_queue,)).start()
+    Thread(target=output_writer, args=(output_queue,)).start()
     while True:
         pool_size = len(schemes) / 3 + 1
         pool = gevent.pool.Pool(pool_size)

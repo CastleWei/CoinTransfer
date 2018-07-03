@@ -11,8 +11,8 @@ class TransferScheme:
         self.coin = coin
         self.dst = dst
 
-        self.name = '%s$$%s$$%s' % (src.__name__, coin, dst.__name__)  # eg. 'GateIO$$eth$$DragonEx'
-        self.repr = '%s --> %s --> %s' % (src.__name__, coin, dst.__name__)  # eg. 'GateIO --> eth --> DragonEx'
+        self.name = '%s$$%s$$%s' % (src.platform_name, coin, dst.platform_name)  # eg. 'GateIO$$eth$$DragonEx'
+        self.repr = '%s --> %s --> %s' % (src.platform_name, coin, dst.platform_name)  # eg. 'GateIO --> eth --> DragonEx'
 
     # def profit(self):
     #     pass

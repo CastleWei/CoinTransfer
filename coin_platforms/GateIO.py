@@ -44,18 +44,18 @@ def prepare_info(coin: str, buy_or_sell: Direction):
         inf['卖盘'] = [i for i in map(lambda x: (float(x[0]), float(x[1])), d['asks'])]
         inf['卖盘'].reverse()
         inf['买盘'] = [i for i in map(lambda x: (float(x[0]), float(x[1])), d['bids'])]
-        inf['卖1'] = inf['卖盘'][0]
-        inf['买1'] = inf['买盘'][0]
+        inf['卖1价'] = inf['卖盘'][0][0]
+        inf['买1价'] = inf['买盘'][0][0]
     
     # 检查需要的数据是否已获取且格式正确
     try:
-        assert inf['卖盘'][0][0] > 0
-        assert inf['买盘'][0][1] > 0
-        assert inf['卖盘'][0][0] < inf['卖盘'][0][1]
-        assert inf['买盘'][0][0] > inf['买盘'][0][1]
-        assert inf['卖1'] > 0
-        assert inf['买1'] > 0
-        assert inf['卖1'] > inf['买1']
+        assert inf['卖盘'][0][0] > 0 and inf['卖盘'][0][1] > 0
+        assert inf['买盘'][0][0] > 0 and inf['买盘'][0][1] > 0
+        assert inf['卖盘'][0][0] < inf['卖盘'][1][0]
+        assert inf['买盘'][0][0] > inf['买盘'][1][0]
+        assert inf['卖1价'] > 0
+        assert inf['买1价'] > 0
+        assert inf['卖1价'] > inf['买1价']
     except (KeyError, TypeError, AssertionError) as e:
         print('prepare info wrong...', e.__class__.__name__, e)
         return False
@@ -67,7 +67,7 @@ def prepare_info(coin: str, buy_or_sell: Direction):
 def can_buy(coin: str, total_money):
     inf = infos[coin]
     # TODO: 测试
-    return total_money / inf['卖一'] * (1 - inf['交易手续费比例']) - inf['提现手续费定额']
+    return total_money / inf['卖1价'] * (1 - inf['交易手续费比例']) - inf['提现手续费定额']
 
 
 def can_sell(coin: str, amount):
