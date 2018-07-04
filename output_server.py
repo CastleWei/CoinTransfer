@@ -1,9 +1,8 @@
 from gevent.pywsgi import WSGIServer
-from multiprocessing import Array
+import json
 
 
-_mem = Array('b', 2)  # 这里的初始化只是形式而已，之后会覆盖
-
+_data_wrapper = {'data': {}}
 uris = ['/', '/main.js', '/main.css', '/minimal-table.css']
 
 
@@ -12,10 +11,7 @@ def application(env, start_response):
 
     # 对于result.json用共享内存的形式从主线程实时获取，避免不断读写硬盘
     if path == '/result.json':
-        # 前四个字节是长度，网络字节序
-        data = _mem[:]  # 先一次性读取，怕进程间不同步
-        l = int.from_bytes(data[:4], 'big')
-        body = bytes(data[4:l+4])
+        body = bytes(json.dumps(_data_wrapper['data']), encoding='utf-8')
         start_response('200 OK', [('Content-Type', 'application/json')])
         return [body]
 
@@ -39,9 +35,9 @@ def application(env, start_response):
     return [b'<h1>Not Found</h1>']
 
 
-def run_server(mem):
-    global _mem
-    _mem = mem
-
+def run_server(data_wrapper):
+    global _data_wrapper
+    _data_wrapper = data_wrapper
+    
     print('Serving on 8000...')
     WSGIServer(('', 8000), application).serve_forever()

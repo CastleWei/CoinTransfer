@@ -53,12 +53,9 @@ def do_scheme(sch):
             time=time.time() # TODO
         )
 
-        global data, mem
-        data[result['name']] = result
-        output_data = bytes(json.dumps(data), encoding='utf-8')
-        l = len(output_data)
-        to_arr = l.to_bytes(4, 'big') + output_data
-        mem[:l+4] = to_arr  # 一次性写入，怕进程间不同步
+        global data_wrapper
+        data = data_wrapper['data']
+        data[sch.name] = result
 
         if profit > 2:
             # do the transfer
@@ -71,18 +68,15 @@ def do_scheme(sch):
 
 
 from output_server import run_server
-from multiprocessing import Process, Value, Array
-# 对于result.json用共享内存的形式给服务器进程，避免不断读写硬盘
-# 前四个字节放长度，后面接数据
-data = {}
-mem = Array('B', 1000000)  # 预留约1MB的内存
+data_wrapper = {'data': {}}
 
 
 if __name__ == '__main__':
-    Process(target=run_server, args=(mem,)).start()
-
     pool_size = len(schemes) / 3 + 1
     pool = gevent.pool.Pool(pool_size)
+
+    pool.spawn(run_server, data_wrapper)
+
     result = pool.imap_unordered(do_scheme, itertools.cycle(schemes))
     for r in result:
         # 只有不断调用迭代器消耗掉结果，imap才会继续往下执行
