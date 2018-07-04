@@ -89,12 +89,14 @@ def do_scheme(sch):
     gevent.sleep(1)
 
 
+import itertools
+
 if __name__ == '__main__':
     Process(target=output_writer, args=(output_queue,)).start()
 
     pool_size = len(schemes) / 3 + 1
     pool = gevent.pool.Pool(pool_size)
-    result = pool.imap_unordered(do_scheme, schemes)
+    result = pool.imap_unordered(do_scheme, itertools.cycle(schemes))
     for r in result:
         # 只有不断调用迭代器消耗掉结果，imap才会继续往下执行
         pass
