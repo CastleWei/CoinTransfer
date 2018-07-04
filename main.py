@@ -1,6 +1,7 @@
 import gevent
 import json
 import time
+import itertools
 
 from utils import TransferScheme
 from utils import Direction
@@ -24,30 +25,6 @@ for src in platfroms:
         for coin in src.infos:
             if coin in dst.infos:
                 schemes.append(TransferScheme(src, coin, dst))
-
-
-from multiprocessing import Process, Queue
-# ！！注意，Queue一定要用multiprocessing里的，用queue.Queue会出现'参数错误'，很难查出原因
-output_queue = Queue()
-
-def output_writer(q: Queue):
-    path = 'output/result.json'
-    # 重新启动程序后先清空
-    with open(path, 'wb') as f:
-        f.write(b'{}')
-
-    while True:
-        if not q.empty():
-            data = json.load(open(path, 'rb'))
-            while not q.empty():
-                it = q.get()
-                data[it['name']] = it
-            # print('data:', data)
-            json.dump(data, open(path, 'wt'), indent=2)
-            # open(path, 'wb').write(json.dumps(data))
-        time.sleep(2)
-        # TODO: 如何正确退出
-
 
 total_money = 1000
 
@@ -76,9 +53,12 @@ def do_scheme(sch):
             time=time.time() # TODO
         )
 
-        global output_queue
-        output_queue.put(result)
-        # print(result)
+        global data, mem
+        data[result['name']] = result
+        output_data = bytes(json.dumps(data), encoding='utf-8')
+        l = len(output_data)
+        to_arr = l.to_bytes(4, 'big') + output_data
+        mem[:l+4] = to_arr  # 一次性写入，怕进程间不同步
 
         if profit > 2:
             # do the transfer
@@ -90,10 +70,16 @@ def do_scheme(sch):
     gevent.sleep(1)
 
 
-import itertools
+from output_server import run_server
+from multiprocessing import Process, Value, Array
+# 对于result.json用共享内存的形式给服务器进程，避免不断读写硬盘
+# 前四个字节放长度，后面接数据
+data = {}
+mem = Array('B', 1000000)  # 预留约1MB的内存
+
 
 if __name__ == '__main__':
-    Process(target=output_writer, args=(output_queue,)).start()
+    Process(target=run_server, args=(mem,)).start()
 
     pool_size = len(schemes) / 3 + 1
     pool = gevent.pool.Pool(pool_size)
