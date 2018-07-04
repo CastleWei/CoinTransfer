@@ -1,0 +1,31 @@
+html {
+    font-family: '微软雅黑', '黑体', sans-serif;
+}
+#container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+.color-block {
+    background-color: yellowgreen;
+}
+.color-block, #result-div {
+    padding: 1px;
+    margin: 8px;
+}
+h2 {
+    /* padding: 10px 0px; */
+    margin: 12px 0px;
+}
+
+#title {text-align: center;}
+#panel {padding: 5px;}
+#status {display: inline;}
+#refresh-interval {width: 2em;}
+#auto-refresh-div {float: right;}
+#footer {text-align: center;}
+
+/* 中间关于结果表格的样式 */
+/* #result-div { width: 100%; } */
+table {
+    width: 100%;
+}

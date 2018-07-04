@@ -69,6 +69,7 @@ def do_scheme(sch):
         result = dict(
             name=sch.name,
             repr=sch.repr,
+            total_money=total_money,
             buy_amount=buy_amount,
             sell_money=sell_money,
             profit=profit,

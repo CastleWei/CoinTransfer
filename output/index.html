@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>虚拟币搬砖信息监控</title>
+    <link href="minimal-table.css" rel="stylesheet" type="text/css">
+    <link href="main.css" rel="stylesheet" type="text/css">
+    <style>
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="color-block" id="title"><h2>虚拟币搬砖信息监控</h2></div>
+        <div class="color-block" id="panel">
+            <div id="status">正在更新...</div>
+            <div id="auto-refresh-div">
+                <input type="checkbox" id="auto-refresh" checked="checked">
+                <label for="auto-refresh">
+                    每
+                    <input type="text" id="refresh-interval" value="3">
+                    秒自动刷新
+                </label>
+                <button id="refresh-now">立即刷新</button>
+            </div>
+        </div>
+        <div id="result-div">
+            <table>
+                <thead>
+                    <tr>
+                        <th>搬砖方案</th>
+                        <th>更新时间</th>
+                        <th>预备资金</th>
+                        <th>可买到币数</th>
+                        <th>可卖出金额</th>
+                        <th>盈利</th>
+                    </tr>
+                </thead>
+                <tbody id="result">
+                    <tr>
+                        <td>Platform1→coin→Platform2</td>
+                        <td>11:23:51</td>
+                        <td>$1000</td>
+                        <td>2.1723</td>
+                        <td>1018.32</td>
+                        <td>18.32</td>
+                    </tr>
+                    <tr>
+                        <td>Platform2→coin→Platform3</td>
+                        <td>11:23:51</td>
+                        <td>$1000</td>
+                        <td>2.1723</td>
+                        <td>1018.32</td>
+                        <td>18.32</td>
+                    </tr>
+                    <tr>
+                        <td>Platform1→coin→Platform3</td>
+                        <td>11:23:51</td>
+                        <td>$1000</td>
+                        <td>2.1723</td>
+                        <td>1018.32</td>
+                        <td>18.32</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="color-block" id="footer">--- The end ---</div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
