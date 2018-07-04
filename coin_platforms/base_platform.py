@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import time
 from utils import Direction
+import gevent
 
 
 class BasePlatform(ABC):
@@ -30,7 +31,14 @@ class BasePlatform(ABC):
 
         if time.time() - inf['update_time'] > cls.timeliness:
             # 发起请求获取数据
-            cls._request_info(coin, buy_or_sell)
+            # cls._request_info(coin, buy_or_sell)
+            req = gevent.spawn(cls._request_info, coin, buy_or_sell)
+            try:
+                req.join(cls.req_timeout)
+            except gevent.Timeout:
+                print('request to %s timed out' % cls.platform_name)
+                return False
+
             inf['update_time'] = time.time()
 
             ## 以下为 cls._request_info() 的示例

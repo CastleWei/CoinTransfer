@@ -14,15 +14,16 @@ platfroms.append(DragonEx)
 from coin_platforms.Huobi import Huobi
 platfroms.append(Huobi)
 
-schemes = [
-    TransferScheme(GateIO, 'btc', DragonEx),
-    TransferScheme(DragonEx, 'btc', GateIO),
-    TransferScheme(GateIO, 'eth', DragonEx),
-    TransferScheme(DragonEx, 'eth', GateIO),
-    TransferScheme(GateIO, 'btc', Huobi),
-    TransferScheme(GateIO, 'eth', Huobi),
-    TransferScheme(Huobi, 'eth', DragonEx),
-]
+schemes = []
+
+# 自动排列组合出所有可能的搬砖方案
+for src in platfroms:
+    for dst in platfroms:
+        if src is dst:
+            continue
+        for coin in src.infos:
+            if coin in dst.infos:
+                schemes.append(TransferScheme(src, coin, dst))
 
 
 from multiprocessing import Process, Queue
@@ -52,10 +53,8 @@ total_money = 1000
 
 def do_scheme(sch):
 
-    sch.src.timeliness = 5
-    sch.src.req_timeout = 5
-    sch.dst.timeliness = 5
-    sch.dst.req_timeout = 5
+    sch.src.timeliness = sch.dst.timeliness = 2
+    sch.src.req_timeout = sch.dst.req_timeout = 2
 
     src_checker = gevent.spawn(sch.src.prepare_info, sch.coin, Direction.Buy)
     dst_checker = gevent.spawn(sch.dst.prepare_info, sch.coin, Direction.Sell)
@@ -89,15 +88,14 @@ def do_scheme(sch):
 
     gevent.sleep(1)
 
+
 if __name__ == '__main__':
     Process(target=output_writer, args=(output_queue,)).start()
-    # Thread(target=output_writer, args=(output_queue,)).start()
-    while True:
-        pool_size = len(schemes) / 3 + 1
-        pool = gevent.pool.Pool(pool_size)
-        # TODO: pool.imap_unordered
-        for sch in schemes:
-            pool.spawn(do_scheme, sch)
-        pool.join()
-        gevent.sleep(2)
+
+    pool_size = len(schemes) / 3 + 1
+    pool = gevent.pool.Pool(pool_size)
+    result = pool.imap_unordered(do_scheme, schemes)
+    for r in result:
+        # 只有不断调用迭代器消耗掉结果，imap才会继续往下执行
+        pass
 

@@ -1,5 +1,5 @@
 from utils import Direction
-from base_platform import BasePlatform
+from coin_platforms.base_platform import BasePlatform
 import grequests
 
 class Huobi(BasePlatform):
