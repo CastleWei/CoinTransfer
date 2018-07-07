@@ -3,8 +3,8 @@ import json
 import time
 import itertools
 
+from coin_platforms.base_platform import BasePlatform
 from utils import TransferScheme
-from utils import Direction
 
 platfroms = []
 
@@ -22,63 +22,78 @@ for src in platfroms:
     for dst in platfroms:
         if src is dst:
             continue
-        for coin in src.infos:
-            if coin in dst.infos:
-                schemes.append(TransferScheme(src, coin, dst))
+        for coin in src.coin_infos:
+            if coin in dst.coin_infos:
+                sch = TransferScheme(src, coin, dst)
+                schemes.append(sch)
+                src.to_notify[coin].append(sch)
+                dst.to_notify[coin].append(sch)
 
 total_money = 1000
 
-def do_scheme(sch):
 
-    sch.src.timeliness = sch.dst.timeliness = 2
-    sch.src.req_timeout = sch.dst.req_timeout = 2
+def update_scheme(sch: TransferScheme):
+    # 相关的两个平台信息都有过第一次成功更新之后才可以计算
+    # 没有update_time说明没有成功更新过，没有所需信息
+    if 'update_time' not in sch.src.coin_infos[sch.coin] or 'update_time' not in sch.dst.coin_infos[sch.coin]:
+        return
 
-    src_checker = gevent.spawn(sch.src.prepare_info, sch.coin, Direction.Buy)
-    dst_checker = gevent.spawn(sch.dst.prepare_info, sch.coin, Direction.Sell)
-    gevent.joinall([src_checker, dst_checker])
+    global total_money
+    buy_amount = sch.src.can_buy(sch.coin, total_money)
+    sell_money = sch.dst.can_sell(sch.coin, buy_amount)
+    profit = sell_money - total_money
 
-    if src_checker.value and dst_checker.value:
-        global total_money
-        buy_amount = sch.src.can_buy(sch.coin, total_money)
-        sell_money = sch.dst.can_sell(sch.coin, buy_amount)
-        profit = sell_money - total_money
+    result = dict(
+        name=sch.name,
+        repr=sch.repr,
+        total_money=total_money,
+        buy_amount=buy_amount,
+        sell_money=sell_money,
+        profit=profit,
+        time=time.time() # TODO
+    )
 
-        result = dict(
-            name=sch.name,
-            repr=sch.repr,
-            total_money=total_money,
-            buy_amount=buy_amount,
-            sell_money=sell_money,
-            profit=profit,
-            time=time.time() # TODO
-        )
+    global shared_data
+    data = shared_data['data']
+    data[sch.name] = result
 
-        global data_wrapper
-        data = data_wrapper['data']
-        data[sch.name] = result
+    if profit > 20:
+        # do the transfer
+        pass
 
-        if profit > 2:
-            # do the transfer
-            pass
 
-    else:
-        print(sch.repr, ': failed to get info')
+def platform_watcher(plfm: BasePlatform):
+    last_request_time = 0
+    # 以平台为单位，各自进行请求，对每个网站请求不要太频繁
+    for coin in itertools.cycle(plfm.coin_infos):
+        last_request_time = time.time()
 
-    gevent.sleep(1)
+        req_ok = plfm.prepare_info(coin)
+            
+        # 本地的计算可以较频繁进行，因此每次得到新数据都重新计算一遍
+        if req_ok:
+            for sch in plfm.to_notify[coin]:
+                update_scheme(sch)
+
+        delta_time = time.time() - last_request_time
+        # 确保两次请求之间的间隔大约为timeliness
+        timeliness = 2
+        if delta_time < timeliness:
+            gevent.sleep(timeliness - delta_time)
+        else:
+            gevent.sleep(0)
+
 
 
 from output_server import run_server
-data_wrapper = {'data': {}}
+shared_data = {'data': {}}
 
 
 if __name__ == '__main__':
-    pool_size = len(schemes) / 3 + 1
-    pool = gevent.pool.Pool(pool_size)
+    import signal, sys
+    gevent.signal(signal.SIGINT, lambda: print('Exit by KeyboardInterrupt...') or sys.exit(0))
 
-    pool.spawn(run_server, data_wrapper)
-
-    result = pool.imap_unordered(do_scheme, itertools.cycle(schemes))
-    for r in result:
-        # 只有不断调用迭代器消耗掉结果，imap才会继续往下执行
-        pass
-
+    gevent.joinall(
+        [gevent.spawn(run_server, shared_data)] +
+        [gevent.spawn(platform_watcher, plfm) for plfm in platfroms]
+    )

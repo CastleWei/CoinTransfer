@@ -1,4 +1,3 @@
-from utils import Direction
 from coin_platforms.base_platform import BasePlatform
 import grequests
 
@@ -9,8 +8,7 @@ class DragonEx(BasePlatform):
     # api_key = '00'
     # secret_key = '00'
 
-    support_coins = ['btc', 'eth']
-    infos = dict(
+    coin_infos = dict(
         btc=dict(
             key='$btc',
             symbol_id='101',
@@ -26,12 +24,14 @@ class DragonEx(BasePlatform):
     )
     
     @classmethod
-    def _request_info(cls, coin: str, buy_or_sell: Direction):
-        inf = cls.infos[coin]
+    def _request_info(cls, coin: str):
+        inf = cls.coin_infos[coin]
         r = grequests.map((
                 grequests.get('https://openapi.dragonex.im/api/v1/market/sell/?symbol_id=' + inf['symbol_id']),
                 grequests.get('https://openapi.dragonex.im/api/v1/market/buy/?symbol_id=' + inf['symbol_id'])
         ))
+        if not r[0] or not r[1]: raise ValueError
+
         inf['卖盘'] = [i for i in map(lambda x: (float(x['price']), float(x['volume'])), r[0].json()['data'])]
         inf['买盘'] = [i for i in map(lambda x: (float(x['price']), float(x['volume'])), r[1].json()['data'])]
         inf['卖1价'] = inf['卖盘'][0][0]

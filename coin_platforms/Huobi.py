@@ -1,4 +1,3 @@
-from utils import Direction
 from coin_platforms.base_platform import BasePlatform
 import grequests
 
@@ -9,8 +8,7 @@ class Huobi(BasePlatform):
     # api_key = '00'
     # secret_key = '00'
 
-    support_coins = ['btc', 'eth']
-    infos = dict(
+    coin_infos = dict(
         btc=dict(
             key='$btc',
             交易手续费比例=0.002,
@@ -24,11 +22,13 @@ class Huobi(BasePlatform):
     )
     
     @classmethod
-    def _request_info(cls, coin: str, buy_or_sell: Direction):
+    def _request_info(cls, coin: str):
         url = 'https://api.huobi.br.com/market/depth?symbol=%susdt&type=step1' % coin
-        d = grequests.get(url).send().response.json()['tick']
+        r = grequests.get(url).send().response
+        if not r: raise ValueError
 
-        inf = cls.infos[coin]
+        d = r.json()['tick']
+        inf = cls.coin_infos[coin]
         inf['卖盘'] = d['asks']
         inf['买盘'] = d['bids']
         inf['卖1价'] = inf['卖盘'][0][0]

@@ -29,7 +29,11 @@ function refresh(){
     request.onload = function() {
         var resp = request.response;
         
-        var list = Object.values(resp)
+        // var list = Object.values(resp)  // 这居然是新API，稍微旧点的浏览器就不支持
+        var list = new Array()
+        for(var key in resp){
+            list.push(resp[key])
+        }
         list.sort(function(x,y){ return y.profit-x.profit; })
         
         new_tbd = document.createElement('tbody')
@@ -37,6 +41,7 @@ function refresh(){
             sch = list[i]
 
             row = new_tbd.insertRow()
+            row.insertCell().innerHTML = i+1  // 序号
             row.insertCell().innerHTML = sch.name.replace(/\$\$/g, '→')
             row.insertCell().innerHTML = tmstr(sch.time)
             row.insertCell().innerHTML = '$'+sch.total_money

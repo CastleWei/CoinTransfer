@@ -2,7 +2,7 @@ from gevent.pywsgi import WSGIServer
 import json
 
 
-_data_wrapper = {'data': {}}
+_shared_data = {'data': {}}
 uris = ['/', '/main.js', '/main.css', '/minimal-table.css']
 
 
@@ -11,7 +11,7 @@ def application(env, start_response):
 
     # 对于result.json用共享内存的形式从主线程实时获取，避免不断读写硬盘
     if path == '/result.json':
-        body = bytes(json.dumps(_data_wrapper['data']), encoding='utf-8')
+        body = bytes(json.dumps(_shared_data['data']), encoding='utf-8')
         start_response('200 OK', [('Content-Type', 'application/json')])
         return [body]
 
@@ -35,9 +35,9 @@ def application(env, start_response):
     return [b'<h1>Not Found</h1>']
 
 
-def run_server(data_wrapper):
-    global _data_wrapper
-    _data_wrapper = data_wrapper
+def run_server(shared_data):
+    global _shared_data
+    _shared_data = shared_data
     
     print('Serving on 8000...')
     WSGIServer(('', 8000), application).serve_forever()
