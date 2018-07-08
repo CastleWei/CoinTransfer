@@ -23,10 +23,9 @@ class BasePlatform(ABC):
 
         # TODO: 手续费也实时从网站请求
         # 发起请求获取数据
-        req = gevent.spawn(cls._request_info, coin)
         try:
-            req.join(cls.req_timeout)
-            req.get()  # 如果有异常，重新抛出
+            with gevent.Timeout(cls.req_timeout):
+                cls._request_info(coin)
         except gevent.Timeout:
             print('！超时：查询 %s 时超时' % cls.platform_name)
             return False
