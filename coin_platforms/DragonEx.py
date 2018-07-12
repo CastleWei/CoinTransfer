@@ -1,5 +1,6 @@
 from coin_platforms.base_platform import BasePlatform
 import grequests
+from collections import defaultdict
 
 class DragonEx(BasePlatform):
     platform_name = 'DragonEx'
@@ -7,6 +8,12 @@ class DragonEx(BasePlatform):
 
     # api_key = '00'
     # secret_key = '00'
+
+    usdt = dict(
+        price_to_buy=0,
+        price_to_sell=0
+    )
+    to_notify = defaultdict(list)
 
     coin_infos = dict(
         btc=dict(
@@ -36,3 +43,8 @@ class DragonEx(BasePlatform):
         inf['买盘'] = [i for i in map(lambda x: (float(x['price']), float(x['volume'])), r[1].json()['data'])]
         inf['卖1价'] = inf['卖盘'][0][0]
         inf['买1价'] = inf['买盘'][0][0]
+
+    @classmethod
+    def _request_usdt(cls):
+        cls.usdt['price_to_buy'] = 6.5
+        cls.usdt['price_to_sell'] = 6.5

@@ -5,27 +5,90 @@ html {
     max-width: 960px;
     margin: 0 auto;
 }
-.color-block {
-    background-color: yellowgreen;
-}
-.color-block, #result-div {
+.block {
+    /* 整个网页分成这样的流式的多个区块 */
     padding: 1px;
     margin: 8px;
+}
+.color-area {
+    /* 所有色块，主题色 */
+    background-color: yellowgreen;
+}
+.center-text {
+    /* title等居中文字 */
+    text-align: center;
 }
 h2 {
     /* padding: 10px 0px; */
     margin: 12px 0px;
 }
 
-#title {text-align: center;}
-#panel {padding: 5px;}
-#status {display: inline;}
-#refresh-interval {width: 2em;}
-#auto-refresh-div {float: right;}
-#footer {text-align: center;}
+/* 同一行左右都有东西的条状区域 */
+.oneline-left-side {
+    display: inline;
+}
+.oneline-right-side {
+    float: right; 
+    margin-top: -2px
+}
 
-/* 中间关于结果表格的样式 */
-/* #result-div { width: 100%; } */
-table {
+/* panel: 小型长条状操作区 */
+.panel {
+    padding: 5px; 
+    margin: 8px; 
+    font-size: small; 
+    border-top: 2px solid yellowgreen;
+    border-bottom: 2px solid yellowgreen;
+}
+.panel input, .panel label, .panel button {
+    vertical-align: middle;
+    font-size: x-small;
+}
+.panel input[type="text"] {
+    width: 2em;
+    text-align: right;
+}
+
+/* 下拉式块状展示区 */
+.pulldown-block-header {padding: 5px;}
+.pulldown-block-title {font-weight: bold; font-size: large}
+.pulldown-icon {color: green; font-size: x-large;}
+
+/* 结果数据表格 */
+.info-table {
     width: 100%;
+}
+.info-table td:nth-child(2) {
+    border-right: none;
+}
+.info-table td:nth-child(3) {
+    /* 时间项，小字、浅色标在名称后面，和名称无边框分割*/
+    color: gray; 
+    font-size: xx-small; 
+    width: 4em; 
+    border-left: none;
+}
+.info-table th .annotation {
+    font-weight: normal; 
+    font-size: x-small;
+    color: gray;
+}
+.info-table td.profit-good {
+    color: #FF8800;
+    /* color: green; */
+}
+.info-table td.profit-bad {
+    color: red;
+}
+
+/* 用户设置表单 */
+.form-table  input[type="text"] {
+    width: 6em;
+    text-align: right;
+}
+tfoot td {
+    background-color: rgb(235,235,235);
+    /* padding: 5px; */
+    text-align: right;
+    font-size: small;
 }

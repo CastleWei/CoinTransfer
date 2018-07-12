@@ -5,15 +5,14 @@
     <title>虚拟币搬砖信息监控</title>
     <link href="minimal-table.css" rel="stylesheet" type="text/css">
     <link href="main.css" rel="stylesheet" type="text/css">
-    <style>
-    </style>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.js"></script>
 </head>
 <body>
     <div id="container">
-        <div class="color-block" id="title"><h2>虚拟币搬砖信息监控</h2></div>
-        <div class="color-block" id="panel">
-            <div id="status">正在更新...</div>
-            <div id="auto-refresh-div">
+        <div id="title" class="block color-area center-text"><h2>虚拟币搬砖信息监控</h2></div>
+        <div id="panel" class="panel">
+            <div id="status" class="oneline-left-side">正在更新...</div>
+            <div id="auto-refresh-div" class="oneline-right-side">
                 <input type="checkbox" id="auto-refresh">
                 <label for="auto-refresh">
                     每
@@ -23,53 +22,151 @@
                 <button id="refresh-now">立即刷新</button>
             </div>
         </div>
-        <div id="result-div">
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>搬砖方案</th>
-                        <th>更新时间</th>
-                        <th>预备资金</th>
-                        <th>可买到币数</th>
-                        <th>可卖出金额</th>
-                        <th>盈利</th>
-                    </tr>
-                </thead>
-                <tbody id="result">
-                    <tr>
-                        <td>1</td>
-                        <td>Platform1→coin→Platform2</td>
-                        <td>11:23:51</td>
-                        <td>$1000</td>
-                        <td>2.1723</td>
-                        <td>1018.32</td>
-                        <td>18.32</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Platform2→coin→Platform3</td>
-                        <td>11:23:51</td>
-                        <td>$1000</td>
-                        <td>2.1723</td>
-                        <td>1018.32</td>
-                        <td>18.32</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Platform1→coin→Platform3</td>
-                        <td>11:23:51</td>
-                        <td>$1000</td>
-                        <td>2.1723</td>
-                        <td>1018.32</td>
-                        <td>18.32</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div id="result-div" class="block pulldown-block">
+            <div class="pulldown-block-header color-area">
+                <div class="pulldown-block-title oneline-left-side">计算结果</div>
+                <div class="pulldown-icon oneline-right-side">▼◀</div>
+            </div>
+            <div class="pulldown-content">
+                <table id="result-table" class="info-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th colspan=2>搬砖方案</th>
+                            <th>买入价</th>
+                            <th>卖出价</th>
+                            <th>盈利</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Platform1→coin→Platform2</td>
+                            <td>11:23:51</td>
+                            <td>487.57</td>
+                            <td>486.62</td>
+                            <td>18.32</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Platform2→coin→Platform3</td>
+                            <td>11:23:51</td>
+                            <td>487.57</td>
+                            <td>486.62</td>
+                            <td>18.32</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Platform1→coin→Platform3</td>
+                            <td>11:23:51</td>
+                            <td>487.57</td>
+                            <td>486.62</td>
+                            <td>18.32</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="color-block" id="footer">--- The end ---</div>
+        <div id="market-div" class="block pulldown-block">
+            <div class="pulldown-block-header color-area">
+                <div class="pulldown-block-title oneline-left-side">各平台行情</div>
+                <div class="pulldown-icon oneline-right-side">▼◀</div>
+            </div>
+            <div class="pulldown-content">
+                <table id="market-table" class="info-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th colspan=2>平台: 币种</th>
+                            <th>汇率<span class="annotation"> (买)</span></th>
+                            <th>汇率<span class="annotation"> (卖)</span></th>
+                            <th>卖盘<span class="annotation"> (价-量)</span></th>
+                            <th>买盘<span class="annotation"> (价-量)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Platform1: btc</td>
+                            <td>11:23:51</td>
+                            <td>¥6.67</td>
+                            <td>¥6.66</td>
+                            <td>6655.45 - 2.55<br>6655.66 - 3.66<br>6655.77 - 0.77</td>
+                            <td>6655.45 - 2.55<br>6655.66 - 3.66<br>6655.77 - 0.77</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Platform2: eth</td>
+                            <td>11:23:51</td>
+                            <td>¥6.5</td>
+                            <td>¥6.5</td>
+                            <td>487.45 - 2.55<br>487.66 - 3.66<br>487.77 - 0.77</td>
+                            <td>487.45 - 2.55<br>487.66 - 3.66<br>487.77 - 0.77</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Platform3: btc</td>
+                            <td>11:23:51</td>
+                            <td>¥6.67</td>
+                            <td>¥6.66</td>
+                            <td>6655.45 - 2.55<br>6655.66 - 3.66<br>6655.77 - 0.77</td>
+                            <td>6655.45 - 2.55<br>6655.66 - 3.66<br>6655.77 - 0.77</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="setting-div" class="block pulldown-block">
+            <div class="pulldown-block-header color-area">
+                <div class="pulldown-block-title oneline-left-side">设置</div>
+                <div class="pulldown-icon oneline-right-side">▼◀</div>
+            </div>
+            <div class="pulldown-content">
+                <form id="form-setting" action="/post-setting" method="POST">
+                <table id="setting-table" class="form-table">
+                    <thead>
+                        <tr>
+                            <th>预备资金</th>
+                            <th>查询间隔</th>
+                            <th>操作阈值</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>¥<input type="text" name="prepared-money" value="5000" disabled></td>
+                            <td><input type="text" name="operation-interval" value="3" disabled>s</td>
+                            <td>¥<input type="text" name="profit-threshold" value="20" disabled></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan=3>
+                                <label id="lblWaiting" style="display: none;">正在提交修改，请稍后。。。</label>
+                                <label id="lblPasswordPrompt" for="btnChangeSetting" style="display: none;">
+                                    请输入密码：<input type="password" name="password" id="inpPassword" disabled>以
+                                </label>
+                                <button id="btnChangeSetting" type="button">修改设置</button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                </form>
+            </div>
+        </div>
+        <div id="footer" class="block color-area center-text">--- The end ---</div>
     </div>
 
+    <script>
+        $('.pulldown-icon').text('▼');
+        
+        $('.pulldown-block-header').click(function(){
+            $(this).siblings('.pulldown-content').slideToggle(200);
+
+            icon = $(this).children('.pulldown-icon');
+            if(icon.text()==='▼'){ icon.text('◀'); }
+            else{ icon.text('▼'); }
+        });
+    </script>
     <script src="main.js"></script>
 </body>
 </html>
