@@ -47,4 +47,4 @@ class DragonEx(BasePlatform):
     @classmethod
     def _request_usdt(cls):
         cls.usdt['price_to_buy'] = 6.5
-        cls.usdt['price_to_sell'] = 6.5
+        cls.usdt['price_to_sell'] = 6.4675
